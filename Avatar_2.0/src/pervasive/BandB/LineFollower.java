@@ -1,4 +1,4 @@
-package pervasive.lejos;
+package pervasive.BandB;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,8 +19,8 @@ import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
 
 public class LineFollower {
-	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
-	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
+	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.D);
 	static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	static float lastColor = 0.0f;
@@ -92,7 +92,7 @@ public class LineFollower {
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ColorDetector());
 		
-		Behavior b1 = new DriveForward();
+		Behavior b1 = new DriveForwardPID();
 		Behavior b2 = new DetectWall();
 		Behavior[] behaviorList = { b1, b2 };
 		Arbitrator arbitrator = new Arbitrator(behaviorList);

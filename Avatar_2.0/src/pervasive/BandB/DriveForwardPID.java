@@ -1,4 +1,4 @@
-package pervasive.lejos;
+package pervasive.BandB;
 
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
@@ -7,14 +7,14 @@ import lejos.robotics.subsumption.Behavior;
 public class DriveForwardPID implements Behavior {
 	private boolean isSuppressed = false;
 	double kp = 1.2;
-	double ki = 0.0008; 
-	double kd = 5; 
+	double ki = 0; 
+	double kd = 100; 
 	int error = 0;
 	int integral = 0;
 	int derivative = 0;
 	int lastError = 0;
 	double correction = 0;
-	int threshold = 50;
+	int threshold = 45;
 	int color;
 	double cTurn;
 	double bTurn;	
@@ -35,8 +35,8 @@ public class DriveForwardPID implements Behavior {
 			integral = error + integral;
 			derivative = error - lastError;
 			correction = kp * error + ki * integral + kd * derivative;
-			bTurn = 20 - correction;
-			cTurn = 20 + correction;
+			bTurn = 300 - correction*1.5;
+			cTurn = 300 + correction*1.5;
 
 			//message = "bT=" + new Double(bTurn).intValue() + " cT="
 			//		+ new Double(cTurn).intValue();

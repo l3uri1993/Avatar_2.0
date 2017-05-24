@@ -1,4 +1,4 @@
-package pervasive.lejos;
+package pervasive.BandB;
 
 import lejos.hardware.lcd.LCD;
 import lejos.robotics.Color;

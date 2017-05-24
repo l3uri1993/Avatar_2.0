@@ -1,4 +1,4 @@
-package pervasive.lejos;
+package pervasive.BandB;
 
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
@@ -18,7 +18,7 @@ public class DriveForward implements Behavior {
 		while (!isSuppressed) {
 			LineFollower.leftMotor.forward();
 			LineFollower.rightMotor.forward();
-			if (LineFollower.getColor() > 0.20) {
+			if (LineFollower.getColor() > 0.42) {
 				LCD.drawString("Turn right", 0, 6);
 				LineFollower.leftMotor.setSpeed(50);
 				LineFollower.rightMotor.setSpeed(150);

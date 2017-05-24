@@ -1,4 +1,4 @@
-package pervasive.lejos;
+package pervasive.BandB;
 
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3TouchSensor;
