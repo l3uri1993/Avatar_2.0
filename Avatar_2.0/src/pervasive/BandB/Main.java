@@ -63,12 +63,41 @@ public class Main
     	
     	//*****PROGRAMMA
     	float white = 0.93f;
-		float black = 0.17f;
-		float midpoint = (white-black)/2+black;
+		float black = 0.5f;
+		float threshold = (white-black)/2+black;
 		
-		pilot.forward();
+		double kp = 10.2;
+		double ki = 0.008; 
+		double kd = 50; 
+		float error = 0;
+		float integral = 0;
+		float derivative = 0;
+		float lastError = 0;
+		double correction = 0;
+		
+		double cTurn;
+		double bTurn;
+		
+//		pilot.forward();
     	while(Button.DOWN.isUp())
     	{
+    		color.fetchSample(colorsensor_color, 0);
+    		error = colorsensor_color[0] - threshold;
+			integral = error + integral;
+			derivative = error - lastError;
+    		
+			correction = kp * error + ki * integral + kd * derivative;
+
+			bTurn = 120 - correction;
+			cTurn = 120 + correction;
+
+			Motor.D.setSpeed(new Double(bTurn).intValue());
+			Motor.D.forward();
+			Motor.A.setSpeed(new Double(cTurn).intValue());
+			Motor.A.forward();
+
+			lastError = error;
+    		
     		/*
     		distance.fetchSample(ultrasonic_distance, 0);
     		System.out.println(ultrasonic_distance[0]*100 + "cm");
@@ -85,7 +114,7 @@ public class Main
     		color.fetchSample(colorsensor_color, 0);
     		System.out.println(colorsensor_color[0]);
     		Delay.msDelay(500);
-    		*/
+    		
     		boolean exit = false;
     		float[] dentrowhile = new float[color.sampleSize()];
     		color.fetchSample(colorsensor_color, 0);
@@ -116,10 +145,9 @@ public class Main
         			exit = false;
     			}
 				pilot.stop();
-				pilot.forward();
+				pilot.forward();*/
     		}
     					
     	}
 	}	
-}
 
