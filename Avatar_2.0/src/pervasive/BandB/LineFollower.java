@@ -79,7 +79,9 @@ public class LineFollower {
 	}
 
 	public static void main(String[] args) {
+		
 		introMessage();
+		
 		leftMotor.resetTachoCount();
 		rightMotor.resetTachoCount();
 		leftMotor.rotateTo(0);
@@ -91,6 +93,7 @@ public class LineFollower {
 		
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ColorDetector());
+		taskList.execute(new ServerThread());
 		
 		Behavior b1 = new DriveForwardPID();
 		Behavior b2 = new DetectWall();
