@@ -94,7 +94,7 @@ public class LineFollower {
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ColorDetector());
 		taskList.execute(new ServerThread());
-		
+	
 		Behavior b1 = new DriveForwardPID();
 		Behavior b2 = new DetectWall();
 		Behavior[] behaviorList = { b1, b2 };
@@ -103,7 +103,7 @@ public class LineFollower {
 		Button.LEDPattern(6);
 		Button.waitForAnyPress();
 		arbitrator.go();
-
+		
 		taskList.shutdown();
 	}
 }
