@@ -18,9 +18,9 @@ import lejos.robotics.SampleProvider;
 import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
 
-public class LineFollower {
-	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.A);
-	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.D);
+public class Avatar {
+	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
+	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
 	static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	static float lastColor = 0.0f;
@@ -81,29 +81,28 @@ public class LineFollower {
 	public static void main(String[] args) {
 		
 		introMessage();
-		
 		leftMotor.resetTachoCount();
 		rightMotor.resetTachoCount();
 		leftMotor.rotateTo(0);
 		rightMotor.rotateTo(0);
-		leftMotor.setSpeed(400);
-		rightMotor.setSpeed(400);
-		leftMotor.setAcceleration(800);
-		rightMotor.setAcceleration(800);
+		leftMotor.setSpeed(40);
+		rightMotor.setSpeed(40);
+		leftMotor.setAcceleration(80);
+		rightMotor.setAcceleration(80);
 		
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
-		taskList.execute(new ColorDetector());
 		taskList.execute(new ServerThread());
-	
+		taskList.execute(new ColorDetector());
+		
 		Behavior b1 = new DriveForwardPID();
 		Behavior b2 = new DetectWall();
 		Behavior[] behaviorList = { b1, b2 };
 		Arbitrator arbitrator = new Arbitrator(behaviorList);
-		LCD.drawString("Line follower", 0, 1);
+		LCD.drawString("Avatar", 0, 1);
 		Button.LEDPattern(6);
 		Button.waitForAnyPress();
 		arbitrator.go();
-		
+
 		taskList.shutdown();
 	}
 }

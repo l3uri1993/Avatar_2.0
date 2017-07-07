@@ -7,11 +7,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import lejos.hardware.Button;
-import lejos.hardware.lcd.LCD;
-import lejos.robotics.subsumption.Arbitrator;
-import lejos.robotics.subsumption.Behavior;
-
 public class ServerThread implements Runnable {
 	ServerSocket serverSocket = null;
 	Socket socket = null;
@@ -36,7 +31,16 @@ public class ServerThread implements Runnable {
 					new InputStreamReader(
 							System.in));
 
-			//new Thread(this).start();
+			new Thread(this).start();
+
+			while(true) {
+				message = readFromServer.readLine(); 
+				writeToClient.println(message);
+				writeToClient.flush(); 
+				if(message.equalsIgnoreCase("exit")) {
+					System.exit(0);
+				} 
+			}
 
 		} catch(IOException exp) {
 			exp.printStackTrace();
@@ -45,11 +49,11 @@ public class ServerThread implements Runnable {
 
 	public void run() { 
 		try {
-			while(true) {
-				message = readFromServer.readLine(); 
-				writeToClient.println(message);
-				writeToClient.flush(); 
-				if(message.equalsIgnoreCase("exit")) {
+			while(true) { 
+				String msg = readFromClient.readLine(); 
+				if(!msg.equalsIgnoreCase("exit")) {
+					System.out.println(msg);
+				} else {
 					System.exit(0);
 				} 
 			}

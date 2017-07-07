@@ -7,14 +7,14 @@ import lejos.robotics.subsumption.Behavior;
 public class DriveForwardPID implements Behavior {
 	private boolean isSuppressed = false;
 	double kp = 1.2;
-	double ki = 0; 
-	double kd = 100; 
+	double ki = 0.0008; 
+	double kd = 5; 
 	int error = 0;
 	int integral = 0;
 	int derivative = 0;
 	int lastError = 0;
 	double correction = 0;
-	int threshold = 45;
+	int threshold = 50;
 	int color;
 	double cTurn;
 	double bTurn;	
@@ -28,24 +28,24 @@ public class DriveForwardPID implements Behavior {
 	public void action() {
 		isSuppressed = false;
 		while (!isSuppressed) {
-			LineFollower.leftMotor.forward();
-			LineFollower.rightMotor.forward();
-			color = (int)(LineFollower.getColor()*100);
+			Avatar.leftMotor.forward();
+			Avatar.rightMotor.forward();
+			color = (int)(Avatar.getColor()*100);
 			error = color - threshold;
 			integral = error + integral;
 			derivative = error - lastError;
 			correction = kp * error + ki * integral + kd * derivative;
-			bTurn = 300 - correction*1.5;
-			cTurn = 300 + correction*1.5;
+			bTurn = 20 - correction;
+			cTurn = 20 + correction;
 
 			//message = "bT=" + new Double(bTurn).intValue() + " cT="
 			//		+ new Double(cTurn).intValue();
 			//LCD.drawString(message, 0, 6, false);
 
-			LineFollower.leftMotor.setSpeed(new Double(bTurn).intValue());
-			LineFollower.leftMotor.forward();
-			LineFollower.rightMotor.setSpeed(new Double(cTurn).intValue());
-			LineFollower.rightMotor.forward();
+			Avatar.leftMotor.setSpeed(new Double(bTurn).intValue());
+			Avatar.leftMotor.forward();
+			Avatar.rightMotor.setSpeed(new Double(cTurn).intValue());
+			Avatar.rightMotor.forward();
 
 			lastError = error;			
 			Thread.yield(); // don't exit till suppressed

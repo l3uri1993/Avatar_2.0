@@ -5,12 +5,12 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.subsumption.Behavior;
 
 public class DetectWall implements Behavior {
-	int sampleSize = LineFollower.touch.sampleSize();
+	int sampleSize = Avatar.touch.sampleSize();
 	float[] sample = new float[sampleSize];
 	
 	@Override
 	public boolean takeControl() {
-		LineFollower.touch.fetchSample(sample, 0);
+		Avatar.touch.fetchSample(sample, 0);
 		if (sample[0] == 0)
 			return false;
 		else
@@ -19,8 +19,8 @@ public class DetectWall implements Behavior {
 
 	@Override
 	public void action() {
-		LineFollower.leftMotor.stop();
-		LineFollower.rightMotor.stop();
+		Avatar.leftMotor.stop();
+		Avatar.rightMotor.stop();
 		System.exit(1);
 	}
 
