@@ -2,6 +2,7 @@ package pervasive.BandB;
 
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
+import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
 
 public class DriveForwardPID implements Behavior {
@@ -26,7 +27,8 @@ public class DriveForwardPID implements Behavior {
 
 	@Override
 	public void action() {
-		isSuppressed = false;
+		isSuppressed = false;		
+
 		while (!isSuppressed) {
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.forward();
@@ -49,6 +51,21 @@ public class DriveForwardPID implements Behavior {
 
 			lastError = error;			
 			Thread.yield(); // don't exit till suppressed
+		}
+		
+		if(Button.DOWN.isDown() == true)
+		{
+			Avatar.leftMotor.stop();
+			Avatar.rightMotor.stop();
+			Avatar.arbitrator.stop();
+			Behavior b1 = new Follower();
+			Behavior b2 = new DetectWall();
+			Behavior[] behaviorList = { b1, b2 };			
+			Avatar.arbitrator = new Arbitrator(behaviorList);
+			LCD.clear();
+			LCD.drawString("Premi giu per continuare", 0, 6, false);
+			Button.waitForAnyPress();
+			Avatar.arbitrator.go();
 		}
 	}
 

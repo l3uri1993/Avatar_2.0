@@ -24,6 +24,9 @@ public class Avatar {
 	static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	static float lastColor = 0.0f;
+	static Arbitrator arbitrator;
+	static String zone = "2";
+	static long timeElapsed = System.currentTimeMillis();
 	
 	public static void setColor(float color) {
 		synchronized (colorSensor) {
@@ -97,7 +100,8 @@ public class Avatar {
 		Behavior b1 = new DriveForwardPID();
 		Behavior b2 = new DetectWall();
 		Behavior[] behaviorList = { b1, b2 };
-		Arbitrator arbitrator = new Arbitrator(behaviorList);
+		
+		arbitrator = new Arbitrator(behaviorList);
 		LCD.drawString("Avatar", 0, 1);
 		Button.LEDPattern(6);
 		Button.waitForAnyPress();

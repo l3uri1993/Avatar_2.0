@@ -51,8 +51,12 @@ public class ServerThread implements Runnable {
 		try {
 			while(true) { 
 				String msg = readFromClient.readLine(); 
-				if(!msg.equalsIgnoreCase("exit")) {
-					System.out.println(msg);
+				if(!msg.equalsIgnoreCase("exit") && (Avatar.timeElapsed - System.currentTimeMillis())>500) {
+					Avatar.timeElapsed = System.currentTimeMillis();
+					synchronized (Avatar.zone)
+					{
+						Avatar.zone = msg;
+					}
 				} else {
 					System.exit(0);
 				} 
