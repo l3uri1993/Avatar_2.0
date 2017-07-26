@@ -27,12 +27,15 @@ public class DriveForwardPID implements Behavior {
 
 	@Override
 	public void action() {
-		isSuppressed = false;		
+		isSuppressed = false;
+		LCD.clear();
+		LCD.drawString("Cambio!!!", 0, 6, false);
+		Button.waitForAnyPress();
 
 		while (!isSuppressed) {
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.forward();
-			color = (int)(Avatar.getColor()*100);
+			//color = (int)(Avatar.getColor()*100);
 			error = color - threshold;
 			integral = error + integral;
 			derivative = error - lastError;

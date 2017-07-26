@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import lejos.hardware.lcd.LCD;
+
 public class ServerThread implements Runnable {
 	ServerSocket serverSocket = null;
 	Socket socket = null;
@@ -33,14 +35,14 @@ public class ServerThread implements Runnable {
 
 			new Thread(this).start();
 
-			while(true) {
+			/*while(true) {
 				message = readFromServer.readLine(); 
 				writeToClient.println(message);
 				writeToClient.flush(); 
 				if(message.equalsIgnoreCase("exit")) {
 					System.exit(0);
 				} 
-			}
+			}*/
 
 		} catch(IOException exp) {
 			exp.printStackTrace();
@@ -51,15 +53,16 @@ public class ServerThread implements Runnable {
 		try {
 			while(true) { 
 				String msg = readFromClient.readLine(); 
-				if(!msg.equalsIgnoreCase("exit") && (Avatar.timeElapsed - System.currentTimeMillis())>500) {
+				if(!msg.equalsIgnoreCase("exit") && (Avatar.timeElapsed - System.currentTimeMillis())<500) {
 					Avatar.timeElapsed = System.currentTimeMillis();
 					synchronized (Avatar.zone)
 					{
 						Avatar.zone = msg;
+						LCD.clear();
+						LCD.drawString(Avatar.zone, 0, 6, false);
 					}
-				} else {
-					System.exit(0);
-				} 
+				}  
+				Thread.sleep(100);
 			}
 		} catch(Exception exp) {
 			exp.printStackTrace();
