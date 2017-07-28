@@ -7,9 +7,10 @@ import lejos.robotics.subsumption.Behavior;
 
 public class Follower implements Behavior
 {
-	public static String zone = "2";
+	private String newzone = "2";
 	private boolean Suppressed = false;
 	String lastZone = "2";
+	boolean Debug = true;
 
 	@Override
 	public boolean takeControl()
@@ -19,54 +20,66 @@ public class Follower implements Behavior
 
 	@Override
 	public void action()
-	{	
-		synchronized (zone)
+	{
+		Suppressed = false;
+		if(Debug == true)
 		{
-			if(Button.DOWN.isDown() == true)
+			Debug = false;
+			LCD.clear();
+			LCD.drawString("Cambio da PID a Follower effettuato, premi SU per continuare!!!", 0, 6, false);
+			Button.waitForAnyPress();
+		}
+		while(!Suppressed)
+		{
+			synchronized (Avatar.zone)
 			{
-				LCD.clear();
-				LCD.drawString("INIZIATA PROCEDURA SCAMBIO", 0, 6, false);
-				Avatar.arbitrator.stop();
-				while(zone != "2")
+				newzone = Avatar.zone;
+				if(Button.DOWN.isDown() == true)
 				{
-					//ruota su se stesso
+					Avatar.leftMotor.stop();
+					Avatar.rightMotor.stop();
+					Avatar.arbitrator.stop();
+					while(Avatar.zone != "2")
+					{
+						TurningMode(); //Gira su se stesso
+					}
+
+					Overtaking(); //Sorpasso
+
+					Behavior b1 = new DriveForwardPID();
+					Behavior[] behaviorList = { b1 };			
+					Avatar.arbitrator = new Arbitrator(behaviorList);
+					lastZone = newzone = "2";
+					LCD.clear();
+					LCD.drawString("Sto per passare a PID, premi SU per continuare!!!", 0, 6, false);
+					Button.waitForAnyPress();
+					Debug = true;
+					Avatar.arbitrator.go();
 				}
-
-				//Sorpasso
-
-				Behavior b1 = new DriveForwardPID();
-				Behavior b2 = new DetectWall();
-				Behavior[] behaviorList = { b1, b2 };			
-				Avatar.arbitrator = new Arbitrator(behaviorList);
-				zone = "2";
-				LCD.clear();
-				LCD.drawString("Premi giu per continuare", 0, 6, false);
-				Button.waitForAnyPress();
-				Avatar.arbitrator.go();
-			}
-			if(zone != lastZone)
-			{
-				lastZone = zone;				
-				switch (zone)
+				if(newzone != lastZone)
 				{
-				case "0":
-					//Arco -45 gradi
-					break;
-				case "1":
-					//Arco -25 gradi
-					break;
-				case "2":
-					//Dritto
-					break;
-				case "3":
-					//Arco +25 gradi
-					break;
-				case "4":
-					//Arco +45 gradi
-					break;
-				default:
-					//Stop
-					break;
+					lastZone = newzone;				
+					switch (newzone)
+					{
+					case "0":
+						Curving(-45); //Inizia arco con curvatura angolare
+						break;
+					case "1":
+						Curving(-25);
+						break;
+					case "2":
+						StraightForward(); //Procede dritto
+						break;
+					case "3":
+						Curving(25);
+						break;
+					case "4":
+						Curving(45);
+						break;
+					default:
+						//Stop
+						break;
+					}
 				}
 			}
 		}
@@ -76,6 +89,29 @@ public class Follower implements Behavior
 	public void suppress()
 	{		
 		Suppressed = true;
+	}
+
+	void Overtaking()
+	{
+
+	}
+
+	void Curving(int angle)
+	{
+
+	}
+
+	void StraightForward()
+	{
+		Avatar.leftMotor.setSpeed(20);
+		Avatar.rightMotor.setSpeed(20);
+		Avatar.leftMotor.forward();
+		Avatar.rightMotor.forward();
+	}
+
+	void TurningMode()
+	{
+
 	}
 
 }

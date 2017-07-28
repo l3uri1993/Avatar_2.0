@@ -35,14 +35,19 @@ public class ServerThread implements Runnable {
 
 			new Thread(this).start();
 
-			/*while(true) {
+			/* Parte inutile...credo
+			 	while(true) 
+			{
 				message = readFromServer.readLine(); 
 				writeToClient.println(message);
 				writeToClient.flush(); 
-				if(message.equalsIgnoreCase("exit")) {
+				if(message.equalsIgnoreCase("exit")) 
+				{
 					System.exit(0);
 				} 
-			}*/
+			}
+			
+			*/
 
 		} catch(IOException exp) {
 			exp.printStackTrace();
@@ -53,8 +58,7 @@ public class ServerThread implements Runnable {
 		try {
 			while(true) { 
 				String msg = readFromClient.readLine(); 
-				if(!msg.equalsIgnoreCase("exit") && (Avatar.timeElapsed - System.currentTimeMillis())<500) {
-					Avatar.timeElapsed = System.currentTimeMillis();
+				if(!msg.equalsIgnoreCase("exit")) {
 					synchronized (Avatar.zone)
 					{
 						Avatar.zone = msg;
@@ -62,7 +66,7 @@ public class ServerThread implements Runnable {
 						LCD.drawString(Avatar.zone, 0, 6, false);
 					}
 				}  
-				Thread.sleep(100);
+				Thread.sleep(500);
 			}
 		} catch(Exception exp) {
 			exp.printStackTrace();

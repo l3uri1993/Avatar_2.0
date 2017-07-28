@@ -1,5 +1,6 @@
 package pervasive.BandB;
 
+import cx.ath.matthew.debug.Debug;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.robotics.subsumption.Arbitrator;
@@ -18,7 +19,8 @@ public class DriveForwardPID implements Behavior {
 	int threshold = 50;
 	int color;
 	double cTurn;
-	double bTurn;	
+	double bTurn;
+	boolean Debug = true;
 
 	@Override
 	public boolean takeControl() {
@@ -28,9 +30,27 @@ public class DriveForwardPID implements Behavior {
 	@Override
 	public void action() {
 		isSuppressed = false;
-		LCD.clear();
-		LCD.drawString("Cambio!!!", 0, 6, false);
-		Button.waitForAnyPress();
+		if(Debug == true)
+		{
+			Debug = false;
+			LCD.clear();
+			LCD.drawString("Cambio da Follower a PID effettuato, premi SU per continuare!!!", 0, 6, false);
+			Button.waitForAnyPress();
+		}
+		if(Button.DOWN.isDown() == true)
+		{
+			Debug = true;
+			Avatar.leftMotor.stop();
+			Avatar.rightMotor.stop();
+			Avatar.arbitrator.stop();
+			Behavior b1 = new Follower();
+			Behavior[] behaviorList = { b1 };			
+			Avatar.arbitrator = new Arbitrator(behaviorList);
+			LCD.clear();
+			LCD.drawString("Sto per passare a Follower, premi SU per continuare!!!", 0, 6, false);
+			Button.waitForAnyPress();
+			Avatar.arbitrator.go();
+		}
 
 		while (!isSuppressed) {
 			Avatar.leftMotor.forward();
@@ -54,21 +74,6 @@ public class DriveForwardPID implements Behavior {
 
 			lastError = error;			
 			Thread.yield(); // don't exit till suppressed
-		}
-		
-		if(Button.DOWN.isDown() == true)
-		{
-			Avatar.leftMotor.stop();
-			Avatar.rightMotor.stop();
-			Avatar.arbitrator.stop();
-			Behavior b1 = new Follower();
-			Behavior b2 = new DetectWall();
-			Behavior[] behaviorList = { b1, b2 };			
-			Avatar.arbitrator = new Arbitrator(behaviorList);
-			LCD.clear();
-			LCD.drawString("Premi giu per continuare", 0, 6, false);
-			Button.waitForAnyPress();
-			Avatar.arbitrator.go();
 		}
 	}
 

@@ -13,21 +13,18 @@ import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
-import lejos.robotics.Color;
-import lejos.robotics.SampleProvider;
 import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
 
 public class Avatar {
 	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
-	//static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-	//static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
+	static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	static float lastColor = 0.0f;
 	static Arbitrator arbitrator;
 	static String zone = "2";
-	static long timeElapsed = System.currentTimeMillis();
-	/*
+	
 	public static void setColor(float color) {
 		synchronized (colorSensor) {
 			lastColor = color;
@@ -38,7 +35,7 @@ public class Avatar {
 			return lastColor;
 		}
 	}
-*/
+
 	public static void introMessage() {
 
 		GraphicsLCD g = LocalEV3.get().getGraphicsLCD();
@@ -82,7 +79,7 @@ public class Avatar {
 	}
 
 	public static void main(String[] args) {
-		
+
 		introMessage();
 		leftMotor.resetTachoCount();
 		rightMotor.resetTachoCount();
@@ -95,9 +92,8 @@ public class Avatar {
 		
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ServerThread());
-		//taskList.execute(new ColorDetector());
+		taskList.execute(new ColorDetector());
 		Behavior b1 = new Follower();
-		//Behavior b2 = new DetectWall();
 		Behavior[] behaviorList = { b1 };
 		
 		arbitrator = new Arbitrator(behaviorList);
