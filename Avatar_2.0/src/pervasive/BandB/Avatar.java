@@ -19,13 +19,13 @@ import lejos.robotics.subsumption.Behavior;
 public class Avatar {
 	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
-	static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
-	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
+	//static EV3TouchSensor touch = new EV3TouchSensor(SensorPort.S1);
+	//static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S3);
 	static float lastColor = 0.0f;
 	static Arbitrator arbitrator;
 	static String zone = "2";
 	
-	public static void setColor(float color) {
+	/*public static void setColor(float color) {
 		synchronized (colorSensor) {
 			lastColor = color;
 		}
@@ -34,7 +34,7 @@ public class Avatar {
 		synchronized (colorSensor) {
 			return lastColor;
 		}
-	}
+	}*/
 
 	public static void introMessage() {
 
