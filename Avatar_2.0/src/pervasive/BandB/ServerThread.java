@@ -19,7 +19,7 @@ public class ServerThread implements Runnable {
 
 	public ServerThread() {
 		try {
-			serverSocket = new ServerSocket(4444);
+			serverSocket = new ServerSocket(5555);
 			System.out.println("Waiting for connection...");
 			socket = serverSocket.accept();
 			System.out.println("Connection accepted...");
@@ -66,7 +66,7 @@ public class ServerThread implements Runnable {
 						LCD.drawString(Avatar.zone, 0, 6, false);
 					}
 				}  
-				Thread.sleep(500);
+				Thread.sleep(100);
 			}
 		} catch(Exception exp) {
 			exp.printStackTrace();

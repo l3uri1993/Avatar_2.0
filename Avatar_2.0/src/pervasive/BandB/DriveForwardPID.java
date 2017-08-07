@@ -1,6 +1,5 @@
 package pervasive.BandB;
 
-import cx.ath.matthew.debug.Debug;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.robotics.subsumption.Arbitrator;
@@ -16,8 +15,8 @@ public class DriveForwardPID implements Behavior {
 	int derivative = 0;
 	int lastError = 0;
 	double correction = 0;
-	int threshold = 50;
-	int color;
+	int threshold = 15;
+	int color = 0;
 	double cTurn;
 	double bTurn;
 	boolean Debug = true;
@@ -34,34 +33,33 @@ public class DriveForwardPID implements Behavior {
 		{
 			Debug = false;
 			LCD.clear();
-			LCD.drawString("Cambio da Follower a PID effettuato, premi SU per continuare!!!", 0, 6, false);
+			LCD.drawString("Ora pid, hit UP", 0, 6, false);
 			Button.waitForAnyPress();
 		}
-		if(Button.DOWN.isDown() == true)
-		{
-			Debug = true;
-			Avatar.leftMotor.stop();
-			Avatar.rightMotor.stop();
-			Avatar.arbitrator.stop();
-			Behavior b1 = new Follower();
-			Behavior[] behaviorList = { b1 };			
-			Avatar.arbitrator = new Arbitrator(behaviorList);
-			LCD.clear();
-			LCD.drawString("Sto per passare a Follower, premi SU per continuare!!!", 0, 6, false);
-			Button.waitForAnyPress();
-			Avatar.arbitrator.go();
-		}
-
 		while (!isSuppressed) {
+			if(Button.DOWN.isDown() == true)
+			{
+				Debug = true;
+				Avatar.leftMotor.stop();
+				Avatar.rightMotor.stop();
+				Avatar.arbitrator.stop();
+				Behavior b1 = new Follower();
+				Behavior[] behaviorList = { b1 };			
+				Avatar.arbitrator = new Arbitrator(behaviorList);
+				LCD.clear();
+				LCD.drawString("Pid->foll..up", 0, 6, false);
+				Button.waitForAnyPress();
+				Avatar.arbitrator.go();
+			}
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.forward();
-			//color = (int)(Avatar.getColor()*100);
+			color = (int)(Avatar.getColor()*100);
 			error = color - threshold;
 			integral = error + integral;
 			derivative = error - lastError;
 			correction = kp * error + ki * integral + kd * derivative;
-			bTurn = 20 - correction;
-			cTurn = 20 + correction;
+			bTurn = Avatar.SPEED - correction;
+			cTurn = Avatar.SPEED + correction;
 
 			//message = "bT=" + new Double(bTurn).intValue() + " cT="
 			//		+ new Double(cTurn).intValue();
@@ -73,7 +71,7 @@ public class DriveForwardPID implements Behavior {
 			Avatar.rightMotor.forward();
 
 			lastError = error;			
-			Thread.yield(); // don't exit till suppressed
+			//Thread.yield(); // don't exit till suppressed
 		}
 	}
 

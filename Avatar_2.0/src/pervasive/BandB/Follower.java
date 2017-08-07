@@ -26,8 +26,13 @@ public class Follower implements Behavior
 		{
 			Debug = false;
 			LCD.clear();
-			LCD.drawString("Cambio da PID a Follower effettuato, premi SU per continuare!!!", 0, 6, false);
+			LCD.drawString("Ora foll, hit UP", 0, 6, false);
 			Button.waitForAnyPress();
+			//Overtaking();
+			Avatar.leftMotor.setSpeed(Avatar.SPEED);
+			Avatar.rightMotor.setSpeed(Avatar.SPEED);
+			Avatar.leftMotor.forward();
+			Avatar.rightMotor.forward();
 		}
 		while(!Suppressed)
 		{
@@ -38,43 +43,43 @@ public class Follower implements Behavior
 				{
 					Avatar.leftMotor.stop();
 					Avatar.rightMotor.stop();
-					Avatar.arbitrator.stop();
-					while(Avatar.zone != "2")
-					{
-						TurningMode(); //Gira su se stesso
-					}
 
 					Overtaking(); //Sorpasso
 
 					Behavior b1 = new DriveForwardPID();
-					Behavior[] behaviorList = { b1 };			
+					Behavior[] behaviorList = { b1 };	
+					Avatar.arbitrator.stop();
 					Avatar.arbitrator = new Arbitrator(behaviorList);
 					lastZone = newzone = "2";
 					LCD.clear();
-					LCD.drawString("Sto per passare a PID, premi SU per continuare!!!", 0, 6, false);
+					LCD.drawString("foll->pid..up", 0, 6, false);
 					Button.waitForAnyPress();
 					Debug = true;
 					Avatar.arbitrator.go();
 				}
 				if(newzone != lastZone)
 				{
-					lastZone = newzone;				
+					lastZone = newzone;	
 					switch (newzone)
 					{
 					case "0":
-						Curving(-45); //Inizia arco con curvatura angolare
+						Avatar.leftMotor.stop();
+						Avatar.rightMotor.stop();
 						break;
 					case "1":
-						Curving(-25);
+						Avatar.leftMotor.stop();
+						Avatar.rightMotor.stop();
 						break;
 					case "2":
 						StraightForward(); //Procede dritto
 						break;
 					case "3":
-						Curving(25);
+						Avatar.leftMotor.stop();
+						Avatar.rightMotor.stop();
 						break;
 					case "4":
-						Curving(45);
+						Avatar.leftMotor.stop();
+						Avatar.rightMotor.stop();
 						break;
 					default:
 						//Stop
@@ -91,27 +96,43 @@ public class Follower implements Behavior
 		Suppressed = true;
 	}
 
-	void Overtaking()
+	public static void Overtaking()
 	{
-
+		Turn(+57);
+		goStraight(110);
+		Turn(-57);
+		goStraight(400);
+		Turn(-57);
+		goStraight(110);
+		Turn(+57);
+		goStraight(50);
 	}
 
 	void Curving(int angle)
 	{
-
-	}
-
-	void StraightForward()
-	{
-		Avatar.leftMotor.setSpeed(20);
-		Avatar.rightMotor.setSpeed(20);
+		Avatar.pilot.rotate(angle);
+		Avatar.leftMotor.setSpeed(Avatar.SPEED);
+		Avatar.rightMotor.setSpeed(Avatar.SPEED);
 		Avatar.leftMotor.forward();
 		Avatar.rightMotor.forward();
 	}
 
-	void TurningMode()
+	void StraightForward()
 	{
-
+		Avatar.leftMotor.setSpeed(Avatar.SPEED);
+		Avatar.rightMotor.setSpeed(Avatar.SPEED);
+		Avatar.leftMotor.forward();
+		Avatar.rightMotor.forward();
+	}
+	
+	public static void Turn(int angle)
+	{
+		Avatar.pilot.rotate(angle);
+	}
+	
+	public static void goStraight(int mm)
+	{
+		Avatar.pilot.travel(mm);
 	}
 
 }
