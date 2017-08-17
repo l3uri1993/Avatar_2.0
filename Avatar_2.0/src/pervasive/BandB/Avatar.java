@@ -23,7 +23,7 @@ import lejos.robotics.subsumption.Behavior;
 import lejos.utility.PilotProps;
 
 public class Avatar {
-	final static int SPEED = 40;
+	final static int SPEED = 70;
 	static EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	static EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
 	static EV3ColorSensor colorSensor = new EV3ColorSensor(SensorPort.S2);
@@ -94,8 +94,6 @@ public class Avatar {
 		introMessage();
 		leftMotor.resetTachoCount();
 		rightMotor.resetTachoCount();
-		leftMotor.rotateTo(0);
-		rightMotor.rotateTo(0);
 		leftMotor.setSpeed(SPEED);
 		rightMotor.setSpeed(SPEED);
 		leftMotor.setAcceleration(80);
@@ -103,7 +101,7 @@ public class Avatar {
 		
 		pilot.setLinearSpeed(SPEED);
 		pilot.setAngularSpeed(SPEED);
-		
+			
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ServerThread());
 		taskList.execute(new ColorDetector());

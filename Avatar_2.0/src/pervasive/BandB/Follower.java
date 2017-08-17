@@ -11,6 +11,19 @@ public class Follower implements Behavior
 	private boolean Suppressed = false;
 	String lastZone = "2";
 	boolean Debug = true;
+	
+	double kp = 0.5;
+	double ki = 0.0000; 
+	double kd = 0.05; 
+	int error = 0;
+	int integral = 0;
+	int derivative = 0;
+	int lastError = 0;
+	double correction = 0;
+	int threshold = 326;
+	int center = 326;
+	double cTurn;
+	double bTurn;
 
 	@Override
 	public boolean takeControl()
@@ -34,8 +47,12 @@ public class Follower implements Behavior
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.forward();
 		}
+		Avatar.leftMotor.setSpeed(Avatar.SPEED);
+		Avatar.rightMotor.setSpeed(Avatar.SPEED);
 		while(!Suppressed)
 		{
+			PID();
+			/*
 			synchronized (Avatar.zone)
 			{
 				newzone = Avatar.zone;
@@ -63,30 +80,34 @@ public class Follower implements Behavior
 					switch (newzone)
 					{
 					case "0":
-						Avatar.leftMotor.stop();
-						Avatar.rightMotor.stop();
+						Avatar.pilot.stop();
+						Avatar.pilot.rotate(-30);
+						Avatar.pilot.forward();
 						break;
 					case "1":
-						Avatar.leftMotor.stop();
-						Avatar.rightMotor.stop();
+						Avatar.pilot.stop();
+						Avatar.pilot.rotate(-20);
+						Avatar.pilot.forward();
 						break;
 					case "2":
 						StraightForward(); //Procede dritto
 						break;
 					case "3":
-						Avatar.leftMotor.stop();
-						Avatar.rightMotor.stop();
+						Avatar.pilot.stop();
+						Avatar.pilot.rotate(20);
+						Avatar.pilot.forward();
 						break;
 					case "4":
-						Avatar.leftMotor.stop();
-						Avatar.rightMotor.stop();
+						Avatar.pilot.stop();
+						Avatar.pilot.rotate(30);
+						Avatar.pilot.forward();
 						break;
 					default:
 						//Stop
 						break;
 					}
 				}
-			}
+			}*/
 		}
 	}
 
@@ -108,19 +129,51 @@ public class Follower implements Behavior
 		goStraight(50);
 	}
 
-	void Curving(int angle)
+	void PID()
 	{
-		Avatar.pilot.rotate(angle);
-		Avatar.leftMotor.setSpeed(Avatar.SPEED);
-		Avatar.rightMotor.setSpeed(Avatar.SPEED);
-		Avatar.leftMotor.forward();
-		Avatar.rightMotor.forward();
+		synchronized (Avatar.zone) {
+			if(Button.DOWN.isDown() == true)
+			{
+				Avatar.leftMotor.stop();
+				Avatar.rightMotor.stop();
+
+				Overtaking(); //Sorpasso
+
+				Behavior b1 = new DriveForwardPID();
+				Behavior[] behaviorList = { b1 };	
+				Avatar.arbitrator.stop();
+				Avatar.arbitrator = new Arbitrator(behaviorList);
+				lastZone = newzone = "2";
+				LCD.clear();
+				LCD.drawString("foll->pid..up", 0, 6, false);
+				Button.waitForAnyPress();
+				Debug = true;
+				Avatar.arbitrator.go();
+			}
+
+			Avatar.leftMotor.forward();
+			Avatar.rightMotor.forward();
+			center = Integer.parseInt(Avatar.zone);
+			error = center - threshold;
+			integral = error + integral;
+			derivative = error - lastError;
+			correction = kp * error + ki * integral + kd * derivative;
+			bTurn = Avatar.SPEED - correction;
+			cTurn = Avatar.SPEED + correction;
+
+			Avatar.leftMotor.setSpeed(new Double(cTurn).intValue());
+			Avatar.leftMotor.forward();
+			Avatar.rightMotor.setSpeed(new Double(bTurn).intValue());
+			Avatar.rightMotor.forward();
+
+			lastError = error;			
+			//Thread.yield(); // don't exit till suppressed
+		}
 	}
 
 	void StraightForward()
 	{
-		Avatar.leftMotor.setSpeed(Avatar.SPEED);
-		Avatar.rightMotor.setSpeed(Avatar.SPEED);
+
 		Avatar.leftMotor.forward();
 		Avatar.rightMotor.forward();
 	}
