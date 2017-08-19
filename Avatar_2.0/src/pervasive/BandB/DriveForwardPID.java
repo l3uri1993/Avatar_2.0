@@ -36,7 +36,7 @@ public class DriveForwardPID implements Behavior {
 			LCD.drawString("Ora pid, hit UP", 0, 6, false);
 			Button.waitForAnyPress();
 		}
-		while (!isSuppressed) {
+		while (isSuppressed == false) {
 			if(Button.DOWN.isDown() == true)
 			{
 				Debug = true;
@@ -61,17 +61,12 @@ public class DriveForwardPID implements Behavior {
 			bTurn = Avatar.SPEED - correction;
 			cTurn = Avatar.SPEED + correction;
 
-			//message = "bT=" + new Double(bTurn).intValue() + " cT="
-			//		+ new Double(cTurn).intValue();
-			//LCD.drawString(message, 0, 6, false);
-
 			Avatar.leftMotor.setSpeed(new Double(bTurn).intValue());
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.setSpeed(new Double(cTurn).intValue());
 			Avatar.rightMotor.forward();
 
-			lastError = error;			
-			//Thread.yield(); // don't exit till suppressed
+			lastError = error;
 		}
 	}
 
