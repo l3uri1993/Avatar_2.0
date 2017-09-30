@@ -4,18 +4,19 @@ import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.robotics.subsumption.Arbitrator;
 import lejos.robotics.subsumption.Behavior;
+import lejos.utility.Delay;
 
 public class DriveForwardPID implements Behavior {
 	private boolean isSuppressed = false;
-	double kp = 1.2;
-	double ki = 0.0008; 
-	double kd = 5; 
+	double kp = 0.5;
+	double ki = 0; 
+	double kd = 0; 
 	int error = 0;
 	int integral = 0;
 	int derivative = 0;
 	int lastError = 0;
 	double correction = 0;
-	int threshold = 15;
+	int threshold = 34;
 	int color = 0;
 	double cTurn;
 	double bTurn;
@@ -41,7 +42,7 @@ public class DriveForwardPID implements Behavior {
 			{
 				Debug = true;
 				Avatar.leftMotor.stop();
-				Avatar.rightMotor.stop();
+				Avatar.rightMotor.stop();		
 				Avatar.arbitrator.stop();
 				Behavior b1 = new Follower();
 				Behavior[] behaviorList = { b1 };			

@@ -10,9 +10,9 @@ public class Follower implements Behavior
 	private boolean Suppressed = false;
 	boolean Debug = true;
 
-	double kp = 0.5;
+	double kp = 0.4;
 	double ki = 0.0000; 
-	double kd = 0.05; 
+	double kd = 0.0; 
 	int error = 0;
 	int integral = 0;
 	int derivative = 0;
@@ -40,8 +40,6 @@ public class Follower implements Behavior
 			LCD.clear();
 			LCD.drawString("Ora foll, hit UP", 0, 6, false);
 			Button.waitForAnyPress();
-			Avatar.leftMotor.setSpeed(Avatar.SPEED);
-			Avatar.rightMotor.setSpeed(Avatar.SPEED);
 			Avatar.leftMotor.forward();
 			Avatar.rightMotor.forward();
 		}
@@ -51,25 +49,7 @@ public class Follower implements Behavior
 			{
 				Avatar.leftMotor.stop();
 				Avatar.rightMotor.stop();
-				
-//				while(true)
-//				{
-//					newzone = Avatar.getZone();
-//					Avatar.leftMotor.setSpeed(20);
-//					Avatar.rightMotor.setSpeed(20);
-//					Avatar.leftMotor.forward();
-//					Avatar.rightMotor.backward();
-//					while(newzone < 320 || newzone > 333)
-//					{
-//						newzone = Avatar.getZone();
-//					}
-//					break;					
-//				}
-
-				Avatar.leftMotor.setSpeed(Avatar.SPEED);
-				Avatar.rightMotor.setSpeed(Avatar.SPEED);
-				//Overtaking(); //Sorpasso
-
+				Overtaking(); //Sorpasso
 				Behavior b1 = new DriveForwardPID();
 				Behavior[] behaviorList = { b1 };	
 				Avatar.arbitrator.stop();
@@ -109,14 +89,14 @@ public class Follower implements Behavior
 
 	public static void Overtaking()
 	{
-		Turn(+57);
-		goStraight(110);
 		Turn(-57);
-		goStraight(400);
-		Turn(-57);
-		goStraight(110);
+		goStraight(130);
 		Turn(+57);
-		goStraight(50);
+		goStraight(465);
+		Turn(+57);
+		goStraight(130);
+		Turn(-57);
+		goStraight(75);
 	}
 
 	public static void Turn(int angle)

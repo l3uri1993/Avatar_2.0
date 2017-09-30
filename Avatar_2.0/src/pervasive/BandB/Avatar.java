@@ -67,7 +67,7 @@ public class Avatar {
 		ExecutorService taskList = Executors.newFixedThreadPool(10);
 		taskList.execute(new ServerThread());
 		taskList.execute(new ColorDetector());
-		Behavior b1 = new Follower();
+		Behavior b1 = new DriveForwardPID();
 		Behavior[] behaviorList = { b1 };
 
 		arbitrator = new Arbitrator(behaviorList);
